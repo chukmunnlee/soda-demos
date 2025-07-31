@@ -16,8 +16,22 @@ spec:
     server: https://kubernetes.default.svc
     namespace: api-ns
   syncPolicy:
-    automated: {}
+    automated: null
       #prune: true
       #selfHeal: true
     syncOptions:
     - CreateNamespace=true
+    - RespectIgnoreDifferences=true
+  ignoreDifferences:
+  - group: argoproj.io
+    kind: Rollout
+    name: api-ro
+    jsonPointers:
+    - /spec/replicas
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: api-httroute
+    jsonPointers:
+    - /spec/rules/0/backendRefs/0/weight
+    - /spec/rules/0/backendRefs/1/weight
+
