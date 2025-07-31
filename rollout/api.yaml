@@ -1,0 +1,106 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: api-ns
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-svc
+  namespace: api-ns
+spec:
+  type: ClusterIP
+  selector:
+    app: api
+    name: api-po
+  ports:
+  - port: 3000
+    targetPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: canary-api-svc
+  namespace: api-ns
+spec:
+  type: ClusterIP
+  selector:
+    app: api
+    name: api-po
+  ports:
+  - port: 3000
+    targetPort: 3000
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: api-httproute
+  namespace: api-ns
+spec:
+  hostnames:
+  - api.192.168.39.200.sslip.io
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    namespace: traefik
+    name: traefik-gateway
+    sectionName: web
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: api-svc
+      port: 3000
+      weight: 1
+    - name: canary-api-svc
+      port: 3000
+      weight: 1
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: api-ro
+  namespace: api-ns
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: api
+      name: api-po
+  strategy:
+    canary:
+      stableService: api-svc
+      canaryService: canary-api-svc
+      steps:
+      # distribution distribution to canary
+      - setWeight: 25
+      - setCanaryScale:
+        # % of canary pods
+          weight: 25
+      - pause: {} 
+      trafficRouting:
+        plugins:
+          argoproj-labs/gatewayAPI:
+            httpRoute: api-httproute
+            namespace: api-ns
+  template:
+    metadata:
+      labels:
+        app: api
+        name: api-po
+    spec:
+      containers:
+      - name: api-container
+        image: chukmunnlee/fake-api:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: web
+          containerPort: 3000
+
