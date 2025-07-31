@@ -55,10 +55,14 @@ spec:
         type: PathPrefix
         value: /
     backendRefs:
-    - name: api-svc
+    - group: '' 
+      kind: Service
+      name: api-svc
       port: 3000
       weight: 1
-    - name: canary-api-svc
+    - group: '' 
+      kind: Service
+      name: canary-api-svc
       port: 3000
       weight: 1
 
