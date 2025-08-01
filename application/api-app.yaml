@@ -30,7 +30,7 @@ spec:
     - /spec/replicas
   - group: gateway.networking.k8s.io
     kind: HTTPRoute
-    name: api-httroute
+    name: api-httproute
     namespace: api-ns
     jsonPointers:
     - /spec/rules/0/backendRefs/0/weight
