@@ -1,0 +1,4 @@
+http://otel-demo.192.168.39.200.sslip.io/feature
+http://otel-demo.192.168.39.200.sslip.io/grafana
+http://otel-demo.192.168.39.200.sslip.io/jaeger/ui
+

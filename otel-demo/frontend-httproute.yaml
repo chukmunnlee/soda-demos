@@ -1,0 +1,46 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: frontend-httproute
+  namespace: otel-demo
+spec:
+  hostnames:
+  - otel-demo.192.168.39.200.sslip.io
+  parentRefs:
+  - name: traefik-gateway
+    namespace: traefik
+    sectionName: web
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: frontend-proxy
+      namespace: otel-demo
+      port: 8080
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: prometheus-httproute
+  namespace: otel-demo
+spec:
+  hostnames:
+  - prometheus.192.168.39.200.sslip.io
+  parentRefs:
+  - name: traefik-gateway
+    namespace: traefik
+    sectionName: web
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: prometheus
+      namespace: otel-demo
+      port: 9090
+

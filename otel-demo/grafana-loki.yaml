@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki
+  labels:
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/instance: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: loki
+      app.kubernetes.io/instance: opentelemetry-demo
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: loki
+        app.kubernetes.io/instance: opentelemetry-demo
+    spec:
+      securityContext:
+        fsGroup: 10001
+      volumes:
+      - name: config
+        configMap:
+          name: loki
+      - name: loki-data
+        emptyDir: {}
+      containers:
+      - name: loki
+        image: grafana/loki:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3100
+        volumeMounts:
+        - name: config
+          mountPath: /etc/loki
+          readOnly: true
+        - name: loki-data
+          mountPath: /loki
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki
+  labels:
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/instance: opentelemetry-demo
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/instance: opentelemetry-demo
+  ports:
+  - port: 3100
+    targetPort: 3100

@@ -1,0 +1,56 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ./opentelemetry-demo.yaml
+- ./frontend-httproute.yaml
+- ./tempo.yaml
+- ./grafana-loki.yaml
+
+namespace: otel-demo
+
+images:
+- name: grafana
+  newTag: 12.2.0-16764329129-ubuntu
+- name: jaeger
+  newTag: 1.71.0
+- name: tempo
+  newTag: latest
+- name: loki
+  newTag: latest
+- name: opentelemetry-collector
+  newTag: 0.131.1
+- name: prometheus-server
+  newTag: v3.5.0
+
+configMapGenerator:
+- name: otel-collector
+  behavior: merge
+  namespace: otel-demo
+  files:
+  - relay=otel-collector-config.yaml
+- name: tempo
+  behavior: create
+  namespace: otel-demo
+  files:
+  - tempo.yaml=tempo-config.yaml
+- name: loki
+  behavior: create
+  namespace: otel-demo
+  files:
+  - local-config.yaml=loki-config.yaml
+- name: grafana
+  behavior: merge
+  namespace: otel-demo
+  files:
+  - datasources.yaml=grafana-datasources.yaml
+
+patches:
+- target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: prometheus
+    namespace: otel-demo
+  path: ./prometheus-patch.yaml

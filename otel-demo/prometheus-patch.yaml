@@ -1,0 +1,6 @@
+- op: "add"
+  path: /spec/template/spec/containers/0/args/-
+  value: "--web.enable-remote-write-receiver"
+- op: "add"
+  path: /spec/template/spec/containers/0/args/-
+  value: "--enable-feature=native-histograms"

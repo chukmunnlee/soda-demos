@@ -1,0 +1,59 @@
+# https://grafana.com/docs/grafana/latest/datasources/
+apiVersion: 1
+datasources:
+- editable: true
+  isDefault: true
+  jsonData:
+    exemplarTraceIdDestinations:
+    - datasourceUid: webstore-traces
+      name: trace_id
+    - name: trace_id
+      url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
+      urlDisplayLabel: View in Jaeger UI
+  name: Prometheus
+  type: prometheus
+  uid: webstore-metrics
+  url: http://prometheus:9090
+
+- editable: true
+  isDefault: false
+  name: Jaeger
+  type: jaeger
+  uid: webstore-traces
+  url: http://jaeger-query:16686/jaeger/ui
+
+- access: proxy
+  editable: true
+  isDefault: false
+  jsonData:
+    database: otel
+    flavor: opensearch
+    logLevelField: severity.text.keyword
+    logMessageField: body
+    pplEnabled: true
+    timeField: observedTimestamp
+    version: 2.18.0
+  name: OpenSearch
+  type: grafana-opensearch-datasource
+  uid: webstore-logs
+  url: http://opensearch:9200/
+
+- name: Tempo
+  type: tempo
+  uid: tempo-webstore-traces
+  url: http://tempo:3200
+  basicAuth: false
+  editable: true
+  jsonData:
+    serviceMap:
+      datasourceUid: webstore-metrics
+
+- name: Loki
+  type: loki
+  uid: loki-webstore-logs
+  url: http://loki:3100
+  basicAuth: false
+  jsonData:
+    timeout: 60
+    maxLines: 1000
+

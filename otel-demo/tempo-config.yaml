@@ -1,0 +1,71 @@
+# https://github.com/grafana/tempo/blob/main/example/docker-compose/local/tempo.yaml
+stream_over_http_enabled: true
+server:
+  http_listen_port: 3200
+  log_level: info
+  log_format: json
+
+distributor:
+  usage:
+    cost_attribution:
+      enabled: true
+  receivers: 
+    otlp:
+      protocols:
+        grpc: 
+          endpoint: 0.0.0.0:4317
+        http: 
+          endpoint: 0.0.0.0:4318
+
+compactor:
+  compaction:
+    block_retention: 48h                # configure total trace retention here
+
+ingester:
+  max_block_duration: 5m
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      cluster: otel-demo
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write    # if you use as part of Docker Compose, use this line.
+        send_exemplars: true
+  traces_storage:
+    path: /var/tempo/generator/traces
+  processor:
+    local_blocks:
+      filter_server_spans: false
+      flush_to_storage: true
+
+storage:
+  trace:
+    backend: local                
+    local:
+      path: /var/tempo/traces      # Set to correct path on your computer
+    wal:
+      path: /var/tempo/wal         # Set to correct path on your computer
+
+overrides:
+  defaults:
+    cost_attribution:
+      dimensions:
+        service.name: ""
+    metrics_generator:
+      processors: [service-graphs, span-metrics]
+      generate_native_histograms: both
+
+#storage:
+#  trace:
+#    backend: s3                 
+#    s3:
+#      bucket: your-s3-bucket-name
+#      region: your-region
+#      access_key: your-access-key  # not needed if role_arn is used.
+#      secret_key: your-secret-key  # not needed if role_arn is used.
+#      role_arn: arn:aws:iam::123456789012:role/your-tempo-role
+
+    

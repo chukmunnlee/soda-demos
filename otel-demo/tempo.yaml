@@ -1,0 +1,78 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempo
+  labels:
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/instance: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tempo
+      app.kubernetes.io/instance: opentelemetry-demo
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: tempo
+        app.kubernetes.io/instance: opentelemetry-demo
+    spec:
+      securityContext:
+        fsGroup: 10001
+      volumes:
+      - name: config
+        configMap:
+          name: tempo
+      - name: tempo-data
+        emptyDir: {}
+      containers:
+      - name: tempo
+        image: grafana/tempo:latest
+        imagePullPolicy: Always
+        args: [ "-config.file=/opt/config/tempo.yaml" ]
+        ports:
+        - name: grpc 
+          containerPort: 4317
+        - name: http 
+          containerPort: 4318
+        - name: grpc-lis 
+          containerPort: 9050
+        - name: http-lis
+          containerPort: 3200
+        volumeMounts:
+        - name: config
+          mountPath: /opt/config
+          readOnly: true
+        - name: tempo-data
+          mountPath: /var/tempo
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempo
+  labels:
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/instance: opentelemetry-demo
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/instance: opentelemetry-demo
+  ports:
+  - name: grpc
+    port: 4317
+    targetPort: grpc
+  - name: http
+    port: 4318
+    targetPort: http
+  - name: grpc-lis 
+    port: 9050
+    targetPort: 9050
+  - name: http-lis
+    port: 3200
+    targetPort: 3200
