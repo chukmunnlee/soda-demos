@@ -103,7 +103,7 @@ spec:
       containers:
       - name: api-container
         image: chukmunnlee/fake-api:v2
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - name: web
           containerPort: 3000
