@@ -21,6 +21,11 @@ datasources:
   type: jaeger
   uid: webstore-traces
   url: http://jaeger-query:16686/jaeger/ui
+  jsonData:
+    tracesToLogsV2:
+      datasourceUid: loki-webstore-logs
+    tracesToMetrics:
+      datasourceUid: webstore-metrics
 
 - access: proxy
   editable: true
