@@ -7,6 +7,4 @@ configurations:
 resources:
 - api.yaml
 
-images:
-- name: api-container
-  newTag: v1
+namespace: api-ns

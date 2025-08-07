@@ -12,6 +12,11 @@ spec:
     repoURL: https://github.com/chukmunnlee/soda-demos.git
     path: application/manifests
     targetRevision: HEAD
+    kustomize:
+      images:
+      - name: api-container
+        newTag: v1
+
   destination:
     server: https://kubernetes.default.svc
     namespace: api-ns
