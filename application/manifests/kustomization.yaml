@@ -7,4 +7,11 @@ configurations:
 resources:
 - api.yaml
 
+
+images:
+- name: chukmunnlee/fake-api
+  newTag: v1
+  # Change to version v2
+  #newTag: v2
+
 namespace: api-ns
