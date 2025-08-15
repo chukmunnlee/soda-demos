@@ -1,0 +1,20 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: latency-check
+  namespace: api-ns
+spec:
+  circuitBreaker:
+    expression: LatencyAtQuantileMS(75.0) > 1500
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ratelimit
+  namespace: api-ns
+spec:
+  rateLimit:
+    average: 50
+    burst: 75
