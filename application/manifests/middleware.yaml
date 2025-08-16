@@ -16,5 +16,5 @@ metadata:
   namespace: api-ns
 spec:
   rateLimit:
-    average: 50
-    burst: 75
+    average: 10
+    burst: 15

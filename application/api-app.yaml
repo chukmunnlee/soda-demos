@@ -17,9 +17,9 @@ spec:
     server: https://kubernetes.default.svc
     namespace: api-ns
   syncPolicy:
-    automated: null
-      #prune: true
-      #selfHeal: true
+    automated: 
+      prune: true
+      selfHeal: false
     syncOptions:
     - CreateNamespace=true
     - RespectIgnoreDifferences=true
