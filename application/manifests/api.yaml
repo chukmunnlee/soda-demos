@@ -66,17 +66,17 @@ spec:
       port: 3000
       weight: 1
     # Uncomment to reflect changes
-    #filters:
-    #- type: ExtensionRef
-    #  extensionRef:
-    #    group: traefik.io
-    #    kind: Middleware
-    #    name: ratelimit
-    #- type: ExtensionRef
-    #  extensionRef:
-    #    group: traefik.io
-    #    kind: Middleware
-    #    name: latency-check
+    filters:
+    - type: ExtensionRef
+      extensionRef:
+        group: traefik.io
+        kind: Middleware
+        name: ratelimit
+    - type: ExtensionRef
+      extensionRef:
+        group: traefik.io
+        kind: Middleware
+        name: latency-check
 
 ---
 apiVersion: argoproj.io/v1alpha1
