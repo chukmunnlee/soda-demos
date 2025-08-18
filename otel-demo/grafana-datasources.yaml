@@ -20,7 +20,7 @@ datasources:
   name: Jaeger
   type: jaeger
   uid: webstore-traces
-  url: http://jaeger-query:16686/jaeger/ui
+  url: http://jaeger-query:16686
   jsonData:
     tracesToLogsV2:
       datasourceUid: loki-webstore-logs

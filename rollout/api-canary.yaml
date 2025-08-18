@@ -42,7 +42,8 @@ metadata:
   namespace: api-ns
 spec:
   hostnames:
-  - api.192.168.39.200.sslip.io
+  #- api.192.168.39.200.sslip.io
+  - api.146.190.203.106.sslip.io
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway

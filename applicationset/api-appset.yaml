@@ -1,0 +1,54 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: api-appset
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: [ "missingkey=error" ]
+  generators:
+  - pullRequest:
+      requeueAfterSeconds: 1800
+      github:
+        owner: chukmunnlee
+        repo: soda-demos
+        # only create ephemeral environment if PR has the preview label
+        labels:
+        - preview
+      filters:
+      - branchMatch: "feature/.*"
+      - targetBranchMatch: (master|main)
+  template:
+    metadata:
+      name: 'api-{{.branch_slug}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/chukmunnlee/soda-demos.git
+        path: application/manifests
+        targetRevision: '{{.head_sha}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{.branch_slug}}'
+      syncPolicy:
+        automated: 
+          prune: true
+          selfHeal: false
+        syncOptions:
+        - CreateNamespace=true
+        - RespectIgnoreDifferences=true
+      ignoreDifferences:
+      - group: argoproj.io
+        kind: Rollout
+        name: api-ro
+        jsonPointers:
+        - /spec/replicas
+      - group: gateway.networking.k8s.io
+        kind: HTTPRoute
+        name: api-httproute
+        namespace: api-ns
+        jsonPointers:
+        - /spec/rules/0/backendRefs/0/weight
+        - /spec/rules/0/backendRefs/1/weight
+        - /spec/rules/0/filters
