@@ -27,7 +27,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/chukmunnlee/soda-demos.git
-        path: application/manifests
+        path: applicationset/manifests
         targetRevision: '{{.head_sha}}'
       destination:
         server: https://kubernetes.default.svc

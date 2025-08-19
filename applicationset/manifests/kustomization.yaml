@@ -5,11 +5,7 @@ configurations:
 - https://argoproj.github.io/argo-rollouts/features/kustomize/rollout-transform-kustomize-v5.yaml
 
 resources:
-- api.yaml
-# UNCOMMENT: update filter section in HTTPRoute
-#- middleware.yaml
-
-namespace: api-ns
+- ./api-bluegreen.yaml
 
 images:
 - name: chukmunnlee/fake-api
