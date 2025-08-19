@@ -9,7 +9,8 @@ spec:
   goTemplateOptions: [ "missingkey=error" ]
   generators:
   - pullRequest:
-      requeueAfterSeconds: 1800
+      #requeueAfterSeconds: 1800
+      requeueAfterSeconds: 60
       github:
         owner: chukmunnlee
         repo: soda-demos
