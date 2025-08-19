@@ -13,6 +13,6 @@ namespace: api-ns
 
 images:
 - name: chukmunnlee/fake-api
-  newTag: v1
+  #newTag: v1
   # UNCOMMENT: Change to version v2
-  #newTag: v2
+  newTag: v2
