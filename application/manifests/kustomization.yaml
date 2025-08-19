@@ -7,7 +7,7 @@ configurations:
 resources:
 - api.yaml
 # UNCOMMENT: update filter section in HTTPRoute
-#- middleware.yaml
+- middleware.yaml
 
 namespace: api-ns
 
