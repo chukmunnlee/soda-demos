@@ -45,11 +45,3 @@ spec:
         name: api-ro
         jsonPointers:
         - /spec/replicas
-      - group: gateway.networking.k8s.io
-        kind: HTTPRoute
-        name: api-httproute
-        namespace: api-ns
-        jsonPointers:
-        - /spec/rules/0/backendRefs/0/weight
-        - /spec/rules/0/backendRefs/1/weight
-        - /spec/rules/0/filters
