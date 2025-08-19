@@ -7,12 +7,12 @@ configurations:
 resources:
 - api.yaml
 # UNCOMMENT: update filter section in HTTPRoute
-- middleware.yaml
+#- middleware.yaml
 
 namespace: api-ns
 
 images:
 - name: chukmunnlee/fake-api
-  #newTag: v1
+  newTag: v1
   # UNCOMMENT: Change to version v2
-  newTag: v2
+  #newTag: v2
