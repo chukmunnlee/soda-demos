@@ -99,7 +99,7 @@ spec:
     spec:
       containers:
       - name: api-container
-        image: chukmunnlee/fake-api:v1
+        image: chukmunnlee/fake-api:v2
         imagePullPolicy: IfNotPresent
         ports:
         - name: web
