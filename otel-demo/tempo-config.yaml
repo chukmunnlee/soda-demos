@@ -1,14 +1,12 @@
 # https://github.com/grafana/tempo/blob/main/example/docker-compose/local/tempo.yaml
 stream_over_http_enabled: true
+target: all
 server:
   http_listen_port: 3200
   log_level: info
-  log_format: json
+  log_format: logfmt
 
 distributor:
-  usage:
-    cost_attribution:
-      enabled: true
   receivers: 
     otlp:
       protocols:
@@ -19,7 +17,10 @@ distributor:
 
 compactor:
   compaction:
-    block_retention: 48h                # configure total trace retention here
+    compacted_block_retention: 2h
+    compaction_window: 1h
+    max_compaction_objects: 1000
+    block_retention: 24h
 
 ingester:
   max_block_duration: 5m
@@ -40,6 +41,8 @@ metrics_generator:
     local_blocks:
       filter_server_spans: false
       flush_to_storage: true
+    span_metrics: 
+      enable_target_info: true
 
 storage:
   trace:
@@ -55,9 +58,17 @@ overrides:
       dimensions:
         service.name: ""
     metrics_generator:
-      processors: [service-graphs, span-metrics]
+      processors: [service-graphs, span-metrics, local-blocks]
       generate_native_histograms: both
 
+querier:
+  max_concurrent_queries: 20
+  trace_by_id:
+    query_timeout: 30s
+
+query_frontend:
+  max_retries: 3
+  
 #storage:
 #  trace:
 #    backend: s3                 
